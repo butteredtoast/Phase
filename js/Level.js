@@ -5,6 +5,7 @@ Level = function(game) {
 
 	this.platforms = null;
 	this.stars = null;
+	this.ledge = null;
 };
 
 Level.prototype = {
@@ -18,6 +19,8 @@ Level.prototype = {
 		this.game.load.image('sky', 'assets/images/sky.png');
     	this.game.load.image('ground', 'assets/images/platform.png');
     	this.game.load.image('star', 'assets/images/star.png');
+    	
+    	this.game.load.audio('gamesound', 'assets/sound/title_highscore.ogg');
 	},
 
 	create: function() {
@@ -27,20 +30,17 @@ Level.prototype = {
 
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
+		this.game.add.audio('gamesound').play('', 0, 0.4, true);
+
  		//  The platforms group
     	this.platforms = this.game.add.group();
     	this.platforms.enableBody = true;
     	this.platforms.physicsBodyType = Phaser.Physics.ARCADE;
     	
-    	// Prevent platforms from colliding with the player
-    	// from every direction but the top
-    	this.platforms.setAll('body.allowCollision.down', false);
-    	this.platforms.setAll('body.allowCollision.right', false);
-    	this.platforms.setAll('body.allowCollision.left', false); 
-
-	    // Create the ground
+    	// Create the ground
 	    this.ground = this.platforms.create(0, game.world.height - 64, 'ground');
 	    this.ground.scale.setTo(2, 2); // Stretch to fill screen
+	    this.ground.physicsBodyType = Phaser.Physics.ARCADE;
 	    this.ground.body.immovable = true;
 
 	    // Create a start ledge
@@ -67,7 +67,12 @@ Level.prototype = {
 		var x = this.rand(400,750);
 		var y = this.rand(100, 300);
 
-		star.reset(x,y);
+		if (star === null) {
+			star = this.game.add.sprite(x, y, 'star');
+			this.stars.add(star);
+		}
+
+		else star.reset(x,y);
 
 		star.body.gravity.y = 0;
 
@@ -78,7 +83,7 @@ Level.prototype = {
 
 	createNewLedge: function () {
 		// Get the first dead pipe of the group
-		var ledge = this.platforms.getFirstDead();
+		ledge = this.platforms.getFirstDead();
 
 		var x = 750;
 		var y = this.rand(250, 450);
@@ -97,6 +102,7 @@ Level.prototype = {
 		// kill it when it's no longer visible
 		ledge.checkWorldBounds = true;
 		ledge.outOfBoundsKill = true;
+
 	},
 
 
