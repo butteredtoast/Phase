@@ -7,6 +7,7 @@
 	    <script type="text/javascript" src="js/Player.js"></script>
 	    <script type="text/javascript" src="js/Level.js"></script>
 	    <script type="text/javascript" src="js/HUD.js"></script>
+	    <script type="text/javascript" src="js/Missile.js"></script>
 	    <style type="text/css">
 	        body {
 	            margin: 0;
@@ -20,6 +21,7 @@
 			var player = null;
 			var level = null;
 			var hud = null;
+			var missile = null;
 
 			function preload()
 			{
@@ -29,6 +31,9 @@
     			player = new Player(game);
     			player.preload();
 
+    			missile = new Missile(game);
+    			missile.preload();
+
     			hud = new HUD(game);
 			}
 
@@ -36,13 +41,15 @@
 			{
     			level.create();
     			player.create();
-    			hud.create();
+    			missile.create();
+    			hud.create(player);
 			}
 
 			function update() 
 			{
     			level.update();
     			player.update();
+    			missile.update();
     			hud.update();
 			}
 
